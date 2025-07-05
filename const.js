@@ -109,3 +109,17 @@ const TABS = {
         TABS.all.items = [...TABS.all.items, ...TABS.all.items];
     }
 const TABS_KEYS = Object.keys(TABS);
+
+const FAVOURITE_SCRIPTS = [
+    { icon: 'light2', iconLabel: 'Освещение', title: 'Выключить весь свет в доме и во дворе', slim: true },
+    { icon: 'schedule', iconLabel: 'Расписание', title: 'Я ухожу', slim: true },
+    { icon: 'light2', iconLabel: 'Освещение', title: 'Включить свет в коридоре', slim: true },
+    { icon: 'temp2', iconLabel: 'Температура', title: 'Набрать горячую ванну', subtitle: 'Начнётся в 18:00', slim: true },
+    { icon: 'temp2', iconLabel: 'Температура', title: 'Сделать пол тёплым во всей квартире', slim: true },
+  ];
+
+const SCHEDULE_ITEMS = [
+    { icon: 'temp', iconLabel: 'Температура', title: 'Philips Cooler', subtitle: 'Начнет охлаждать в 16:30' },
+    { icon: 'light', iconLabel: 'Освещение', title: 'Xiaomi Yeelight LED Smart Bulb', subtitle: 'Включится в 17:00' },
+    { icon: 'light', iconLabel: 'Освещение', title: 'Xiaomi Yeelight LED Smart Bulb', subtitle: 'Включится в 17:00' },
+  ];
