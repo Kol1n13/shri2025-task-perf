@@ -106,8 +106,10 @@ function renderMoreArrow(){
   if (arrow){
     panelWrapper.removeChild(arrow);
   }
-  const tabI = panelWrapper.querySelector(`#panel_${activeTab}`)
-  if (tabI.scrollWidth > tabI.clientWidth) {
+  const tabI = panelWrapper.querySelector(`#panel_${activeTab}`);
+  const allEvents = tabI.querySelectorAll('.event');
+  const widthSum = Array.from(allEvents).reduce((acc, event) => acc + event.offsetWidth, 0);
+  if (widthSum > tabI.offsetWidth) {
     const arrow = document.createElement('div');
     arrow.className = 'section__arrow';
     arrow.addEventListener('click', () => {
