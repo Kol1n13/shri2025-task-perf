@@ -62,41 +62,58 @@ function renderTabs() {
   TABS_KEYS.forEach(key => {
     const opt = document.createElement('option');
     opt.value = key;
+    opt.selected = key === activeTab;
     opt.textContent = TABS[key].title;
     selectEl.appendChild(opt);
 
     const li = document.createElement('li');
     li.className = 'section__tab' + (key === activeTab ? ' section__tab_active' : '');
     li.setAttribute('role', 'tab');
-    li.setAttribute('tabindex', key === activeTab ? '0' : '-1');
-    li.dataset.key = key;
+    li.setAttribute('tabindex', key === activeTab ? '0' : '');
+    li.ariaSelected = key === activeTab ? 'true' : 'false';
+    li.id = `tab_${key}`
+    li.setAttribute('aria-controls', `panel_${key}`)
     li.textContent = TABS[key].title;
     li.addEventListener('click', () => {
+      updateTab(key);
+      updatePanel(key);
       activeTab = key;
-      renderPanels();
-      renderTabs();
+      renderMoreArrow();
     });
+
     tabsEl.appendChild(li);
   });
   selectEl.value = activeTab;
 }
 
-function renderPanels() {
-  panelWrapper.innerHTML = '';
-  const div = document.createElement('div');
-  div.className = 'section__panel';
+function renderPanel(key){
+  const tabI = document.createElement('div');
+  tabI.role = 'tabpanel';
+  tabI.className = 'section__panel' + (key !== activeTab ? ' section__panel_hidden' : '');
+  tabI.ariaHidden = !(key === activeTab);
+  tabI.id = `panel_${key}`;
+  tabI.setAttribute('aria-labelledby', `tab_${key}`);
   const ul = document.createElement('ul');
   ul.className = 'section__panel-list';
-  TABS[activeTab].items.forEach(item => ul.appendChild(createEvent(item)));
-  div.appendChild(ul);
-  panelWrapper.appendChild(div);
+  TABS[key].items.forEach(item => ul.appendChild(createEvent(item)));
+  tabI.appendChild(ul);
+  panelWrapper.appendChild(tabI);
 
-  if (div.scrollWidth > div.clientWidth) {
+}
+
+function renderMoreArrow(){
+  const arrow = panelWrapper.querySelector('.section__arrow')
+  if (arrow){
+    panelWrapper.removeChild(arrow);
+  }
+  const tabI = panelWrapper.querySelector(`#panel_${activeTab}`)
+  console.log(tabI)
+  if (tabI.scrollWidth > tabI.clientWidth) {
     const arrow = document.createElement('div');
     arrow.className = 'section__arrow';
     arrow.addEventListener('click', () => {
-      div.scrollTo({
-        left: div.scrollLeft + 400,
+      tabI.scrollTo({
+        left: tabI.scrollLeft + 400,
         behavior: 'smooth'
       });
     });
@@ -104,11 +121,40 @@ function renderPanels() {
   }
 }
 
+function renderPanels() {
+  panelWrapper.innerHTML = '';
+  TABS_KEYS.forEach(key => {
+    renderPanel(key);
+  })
+}
+
+
+function updateTab(key){
+    const newTab = document.querySelector(`#tab_${key}`)
+    const oldTab = document.querySelector(`#tab_${activeTab}`);
+    oldTab.classList.remove('section__tab_active');
+    oldTab.ariaSelected = false;
+    newTab.classList.add('section__tab_active');
+    newTab.ariaSelected = true;
+}
+
+function updatePanel(newTab){
+    const oldPanel = panelWrapper.querySelector(`#panel_${activeTab}`)
+    const newPanel = panelWrapper.querySelector(`#panel_${newTab}`);
+    oldPanel.classList.add('section__panel_hidden');
+    oldPanel.ariaHidden = true;
+    newPanel.classList.remove('section__panel_hidden');
+    newPanel.ariaHidden = false;
+    newPanel.scroll(0, 0);
+}
+
 selectEl.addEventListener('input', e => {
+  updateTab(e.target.value);
+  updatePanel(e.target.value);
   activeTab = e.target.value;
-  renderPanels();
-  renderTabs();
+  renderMoreArrow();
 });
 
 renderTabs();
 renderPanels();
+renderMoreArrow();
