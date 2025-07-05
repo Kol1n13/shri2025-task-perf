@@ -145,7 +145,6 @@ function updatePanel(newTab){
     oldPanel.ariaHidden = true;
     newPanel.classList.remove('section__panel_hidden');
     newPanel.ariaHidden = false;
-    newPanel.scroll(0, 0);
 }
 
 selectEl.addEventListener('input', e => {
