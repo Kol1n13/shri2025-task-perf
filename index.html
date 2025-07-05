@@ -393,7 +393,7 @@
                 panelWrapper.className = "section__panel-wrapper";
                 devicesSection.appendChild(panelWrapper);
                 
-                let allPanel = null;
+                let allItemsPanel = null;
                 TABS_KEYS.forEach(key => {
                     const panel = document.createElement("div");
                     panel.className = "section__panel section__panel_hidden";
@@ -406,7 +406,7 @@
                     panel.appendChild(devicesList);
                     panelWrapper.appendChild(panel);
                     if (key === "all")
-                        allPanel = panel;
+                        allItemsPanel = panel;
                 });
                 
                 const arrow = document.createElement("div");
@@ -416,25 +416,15 @@
                 
                 let activeTab = "all";
                 const sizes = {};
+                const renderedTabs = {};
                 let hasRightScroll = false;
                 const tabs = tabsEl.querySelectorAll(".section__tab");
-                TABS_KEYS.forEach(key => {
-                    if (key === activeTab)
-                        renderTab(key);
-                    else{
-                        setTimeout(() => {renderTab(key)}, 100);
-                    }
-                })
-
-                function renderTab(key) {
-                    const panel = document.getElementById(`panel_${key}`);
-                    if (!panel)
-                        return;
-                    const panelItems = panel.querySelector(".section__panel-list");
-                    panelItems.innerHTML = "";
-                    TABS[key].items.forEach((item, index) => {
-                        const id = `${key}-${index}`;
-                        panelItems.appendChild(createEvent({
+                
+                if (allItemsPanel) {
+                    const items = allItemsPanel.querySelector(".section__panel-list");
+                    TABS.all.items.forEach((item, index) => {
+                        const id = `all-${index}`;
+                        items.appendChild(createEvent({
                             ...item,
                             id,
                             onSize: (id, size) => {
@@ -443,11 +433,11 @@
                             }
                         }));
                     });
+                    renderedTabs.all = true;
                 }
                 
                 function updateTab(key) {
-                    if (!TABS_KEYS.includes(key))
-                        return;
+                    if (!TABS_KEYS.includes(key)) return;
                     activeTab = key;
                     selectEl.value = key;
                     tabs.forEach(tab => {
@@ -461,19 +451,40 @@
                         panel.classList.toggle("section__panel_hidden", !isActive);
                         panel.setAttribute("aria-hidden", !isActive ? "true" : "false");
                     });
+                    if (!renderedTabs[key]) renderTab(key);
                     setTimeout(renderMoreArrow, 0);
+                }
+                
+                function renderTab(key) {
+                    const panel = document.getElementById(`panel_${key}`);
+                    if (!panel) return;
+                    const list = panel.querySelector(".section__panel-list");
+                    list.innerHTML = "";
+                    TABS[key].items.forEach((item, index) => {
+                        const id = `${key}-${index}`;
+                        list.appendChild(createEvent({
+                            ...item,
+                            id,
+                            onSize: (id, size) => {
+                                sizes[id] = size;
+                                renderMoreArrow();
+                            }
+                        }));
+                    });
+                    renderedTabs[key] = true;
                 }
                 
                 function renderMoreArrow() {
                     const activePanel = panelWrapper.querySelector(".section__panel:not(.section__panel_hidden)");
                     if (!activePanel) 
                         return;
-                    const panelItems = activePanel.querySelector(".section__panel-list");
-                    if (!panelItems)
+                    const list = activePanel.querySelector(".section__panel-list");
+                    if (!list)
                         return;
-                    const totalWidth = Array.from(panelItems.children).reduce((acc, el) => {
-                    return acc + el.offsetWidth;
-                    }, 0);
+                    let totalWidth = 0;
+                    Array.from(list.children).forEach(child => {
+                        totalWidth += child.offsetWidth;
+                    });
                     hasRightScroll = totalWidth > activePanel.offsetWidth;
                     arrow.style.display = hasRightScroll ? "block" : "none";
                 }
@@ -483,17 +494,15 @@
                     tab.addEventListener("click", () => updateTab(tab.dataset.tabkey));
                 });
                 arrow.addEventListener("click", () => {
-                    const tabI = panelWrapper.querySelector(".section__panel:not(.section__panel_hidden)");
-                    if (tabI)
-                        tabI.scrollTo({
-                            left: tabI.scrollLeft + 400,
-                            behavior: 'smooth'
-                        });
+                    const activePanel = panelWrapper.querySelector(".section__panel:not(.section__panel_hidden)");
+                    if (activePanel) 
+                        activePanel.scrollBy({ left: 400, behavior: "smooth" });
                 });
-
                 window.addEventListener("resize", renderMoreArrow);
-
-                updateTab('all');
+                
+                const params = new URLSearchParams(window.location.search);
+                const initialTab = params.get("tab") || "all";
+                updateTab(initialTab);
             }
 
             createHeader();
