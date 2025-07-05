@@ -79,6 +79,7 @@ function renderTabs() {
       updatePanel(key);
       activeTab = key;
       renderMoreArrow();
+      selectEl.value = key;
     });
 
     tabsEl.appendChild(li);
