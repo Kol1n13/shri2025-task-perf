@@ -1,5 +1,5 @@
-const menuButton = document.getElementById('menu-button');
-const navLinks = document.getElementById('nav-links');
+const menuButton = document.querySelector('.header__menu');
+const navLinks = document.querySelector('.header__links');
 
 let expanded = false;
 let toggled = false;
@@ -44,15 +44,15 @@ function createEvent({ icon, iconLabel, title, subtitle, slim }) {
   return li;
 }
 
-const schedule = document.getElementById('event-schedule');
+const schedule = document.querySelector('.hero-dashboard__schedule');
 SCHEDULE_ITEMS.forEach(e => schedule.appendChild(createEvent(e)));
 
-const scriptList = document.getElementById('script-list');
+const scriptList = document.querySelector('.event-grid')
 FAVOURITE_SCRIPTS.forEach(e => scriptList.appendChild(createEvent(e)));
 
-const tabsEl = document.getElementById('tabs');
-const selectEl = document.getElementById('device-select');
-const panelWrapper = document.getElementById('panel-wrapper');
+const tabsEl = document.querySelector('.section__tabs')
+const selectEl = document.querySelector('.section__select')
+const panelWrapper = document.querySelector('.section__panel-wrapper')
 
 let activeTab = 'all';
 
@@ -107,7 +107,6 @@ function renderMoreArrow(){
     panelWrapper.removeChild(arrow);
   }
   const tabI = panelWrapper.querySelector(`#panel_${activeTab}`)
-  console.log(tabI)
   if (tabI.scrollWidth > tabI.clientWidth) {
     const arrow = document.createElement('div');
     arrow.className = 'section__arrow';
