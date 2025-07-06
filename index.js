@@ -319,7 +319,7 @@ function createMain() {
 
     window.addEventListener("resize", renderMoreArrow);
 
-    updateTab('all');
+    updateTab(new URLSearchParams(window.location.search).get("tab") || "all");
 }
 
 createHeader();
