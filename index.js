@@ -252,11 +252,7 @@ function createMain() {
     let hasRightScroll = false;
     const tabs = tabsEl.querySelectorAll(".section__tab");
     TABS_KEYS.forEach(key => {
-        if (key === activeTab)
-            renderTab(key);
-        else{
-            setTimeout(() => {renderTab(key)}, 100);
-        }
+        renderTab(key);
     })
 
     function renderTab(key) {
@@ -318,10 +314,7 @@ function createMain() {
     arrow.addEventListener("click", () => {
         const tabI = panelWrapper.querySelector(".section__panel:not(.section__panel_hidden)");
         if (tabI)
-            tabI.scrollTo({
-                left: tabI.scrollLeft + 400,
-                behavior: 'smooth'
-            });
+            tabI.scrollBy({ left: 400, behavior: 'smooth' });
     });
 
     window.addEventListener("resize", renderMoreArrow);
