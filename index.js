@@ -251,9 +251,7 @@ function createMain() {
     const sizes = {};
     let hasRightScroll = false;
     const tabs = tabsEl.querySelectorAll(".section__tab");
-    TABS_KEYS.forEach(key => {
-        renderTab(key);
-    })
+    renderTab(activeTab);
 
     function renderTab(key) {
         const panel = document.getElementById(`panel_${key}`);
@@ -290,6 +288,8 @@ function createMain() {
             panel.classList.toggle("section__panel_hidden", !isActive);
             panel.setAttribute("aria-hidden", !isActive ? "true" : "false");
         });
+        if (document.getElementById(`panel_${key}`).querySelector('.section__panel-list').innerHTML === "")
+            renderTab(key);
         setTimeout(renderMoreArrow, 0);
     }
     
